@@ -1,0 +1,53 @@
+﻿@model IEnumerable<ASM2.Areas.Admin.Models.Customers>
+
+@{
+    ViewData["Title"] = "Danh sách khách hàng";
+}
+
+<h1>Danh sách khách hàng</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-success">Create New</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.First().CustomerId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().Email)
+            </th>
+            <th>
+                @Html.DisplayName("Password (Hidden)")
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CustomerId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td>
+                    **** 
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { customerId = item.CustomerId }) |
+                    @Html.ActionLink("Detail", "Detail", new { customerId = item.CustomerId }) |
+                    @Html.ActionLink("Delete", "Delete", new { customerId = item.CustomerId })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<p>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Back to Home</a>
+</p>

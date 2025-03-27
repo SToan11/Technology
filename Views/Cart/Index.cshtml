@@ -1,0 +1,131 @@
+﻿@model List<CartItem>
+
+<h2 class="text-center mb-4">Giỏ hàng</h2>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success text-center">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+@if (Model.Any())
+{
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle">
+            <thead class="thead-light">
+                <tr>
+                    <th class="text-center">Hình ảnh</th>
+                    <th class="text-center">Sản phẩm</th>
+                    <th class="text-center">Giá</th>
+                    <th class="text-center">Số lượng</th>
+                    <th class="text-center">Tổng</th>
+                    <th class="text-center"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="text-center">
+                            <img src="/images/@item.DetailImage" class="img-fluid rounded" width="150" height="100" />
+                        </td>
+                        <td class="text-center">
+                            <h5>@item.ProductName</h5>
+                        </td>
+                        <td class="text-center">
+                            <span class="text-primary">@item.Price.ToString("C")</span>
+                        </td>
+                        <td class="text-center">
+                            <form asp-action="UpdateToCart" method="post" class="d-inline">
+                                <input type="hidden" name="productId" value="@item.ProductId" />
+                                <input type="number" name="quantity" value="@item.Quantity" min="1" class="form-control d-inline-block w-auto text-center" />
+                                <button type="submit" class="btn btn-outline-primary btn-sm">
+                                    <i class="fas fa-sync-alt"></i> Cập nhật
+                                </button>
+                            </form>
+                        </td>
+                        <td class="text-center">
+                            <strong>@((item.Price * item.Quantity).ToString("C"))</strong>
+                        </td>
+                        <td class="text-center">
+                            <form asp-action="RemoveFromCart" method="post">
+                                <input type="hidden" name="productId" value="@item.ProductId" />
+                                <button type="submit" class="btn btn-outline-danger btn-sm">
+                                    <i class="fas fa-trash-alt"></i> Xóa
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="text-end">
+        <p><strong>Tổng cộng: </strong>@Model.Sum(i => i.Price * i.Quantity).ToString("C")</p>
+        <form asp-action="PlaceOrder" method="post" id="placeOrderForm">
+            <button type="submit" class="btn btn-success" id="placeOrderButton">
+                <i class="fas fa-shopping-cart"></i> Đặt hàng
+            </button>
+        </form>
+    </div>
+
+    <!-- Thêm form nhập thông tin đặt hàng và giao hàng -->
+    <div id="orderDetailsForm" style="display:none;" class="mt-4">
+        <h3>Thông tin đặt hàng</h3>
+        <form asp-action="SubmitOrderDetails" method="post">
+            <div class="mb-3">
+                <label for="customerName">Họ tên:</label>
+                <input type="text" name="customerName" class="form-control" required />
+            </div>
+            <div class="mb-3">
+                <label for="customerPhone">Số điện thoại:</label>
+                <input type="tel" name="customerPhone" class="form-control" required />
+            </div>
+            <div class="mb-3">
+                <label for="customerEmail">Email:</label>
+                <input type="email" name="customerEmail" class="form-control" required />
+            </div>
+            <div class="mb-3">
+                <label for="customerAddress">Địa chỉ:</label>
+                <textarea name="customerAddress" class="form-control" required></textarea>
+            </div>
+
+            <h3>Thông tin giao hàng</h3>
+            <div class="mb-3">
+                <label for="shippingName">Họ tên người nhận:</label>
+                <input type="text" name="shippingName" class="form-control" required />
+            </div>
+            <div class="mb-3">
+                <label for="shippingPhone">Số điện thoại người nhận:</label>
+                <input type="tel" name="shippingPhone" class="form-control" required />
+            </div>
+            <div class="mb-3">
+                <label for="shippingEmail">Email người nhận:</label>
+                <input type="email" name="shippingEmail" class="form-control" required />
+            </div>
+            <div class="mb-3">
+                <label for="shippingAddress">Địa chỉ giao hàng:</label>
+                <textarea name="shippingAddress" class="form-control" required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Xác nhận đặt hàng</button>
+        </form>
+    </div>
+}
+else
+{
+    <div class="alert alert-warning text-center">
+        <p>Giỏ hàng của bạn đang trống</p>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        document.getElementById("placeOrderButton").addEventListener("click", function(event) {
+            event.preventDefault();
+            document.getElementById("orderDetailsForm").style.display = "block";
+        });
+    </script>
+}
